@@ -3,6 +3,10 @@ from PIL import Image, ImageChops, ImageEnhance
 import subprocess
 import os
 import pypdftk
+import argparse
+
+multiline_description = """Remove white background from a PDF and overlay it on another PDF.\n
+Perfect for merging annotated or highlighted documents onto standardized templates."""
 
 def remove_white_background(image_path):
     """
@@ -84,17 +88,22 @@ def compress_pdf(input_file, output_file):
     except FileNotFoundError:
         print('Ghostscript is not installed or not found in the system PATH.')
 
-# Example usage
-input_pdf_path = "test_files/OL.pdf"
-background_pdf_path = "test_files/Back.pdf"
 overlayed_pdf_path = "test_files/overlayed.pdf"
 compressed_pdf_path = "test_files/compressed.pdf"
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=multiline_description)
+    parser.add_argument("foreground_pdf_path", help="Path to the input PDF with white background to remove.")
+    parser.add_argument("background_pdf_path", help="Path to the background PDF to overlay the processed PDF onto.")
+    parser.add_argument("output_pdf_path", help="Path to save the output PDF.")
+
+    args = parser.parse_args()
+
 # Overlay the 2 PDF files
-process_pdf(input_pdf_path, background_pdf_path, overlayed_pdf_path)
+process_pdf(args.foreground_pdf_path, args.background_pdf_path, overlayed_pdf_path)
 
 # Compress the Overlayed PDF file.
-compress_pdf(overlayed_pdf_path, compressed_pdf_path)
+compress_pdf(overlayed_pdf_path, args.output_pdf_path)
 
 # Delete Overlayed PDF.
 os.remove(overlayed_pdf_path)
