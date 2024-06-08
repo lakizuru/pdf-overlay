@@ -10,9 +10,23 @@
                                                         |___/ 
 ```
 
-A Python script processes a multi-page PDF to remove white backgrounds from its pages and overlays them onto another PDF which is optimized for reduced file size while maintaining acceptable image quality through JPEG compression and resolution adjustment. Perfect for merging annotated or highlighted documents onto standardized templates.
+A Python script which processes a multi-page PDF to remove white backgrounds from its pages and overlays them onto another PDF which is optimized for reduced file size while maintaining acceptable image quality through JPEG compression and resolution adjustment. Perfect for merging annotated or highlighted documents onto standardized templates.
 
 #### Developed by Lakisuru Semasinghe (https://github.com/lakizuru)
+
+## Use Case
+
+You have PDF1 with some content as shown in Image 1.
+You also have PDF2 with the annotations for the PDF1 as shown in Image 2.
+You need to overlay PDF2 content on PDF1 as shown in Image 3.
+
+| PDF1 (Background) | PDF2 (Foreground) | Output (Overlayed PDF) |
+| -------- | ------- | ------- |
+| <img src="docs\background_test1.jpg" alt="Image 1" width="200"/> | <img src="docs\foreground_test1.jpg" alt="Image 1" width="200"/> | <img src="docs\output_test1.jpg" alt="Image 1" width="200"/> |
+
+To fulfill this requirement, you can use **PDF Overlay**.
+
+
 
 ## Prerequisites
 To use PDF Overlay CLI, the following dependancies have to be satisfied.
@@ -24,7 +38,7 @@ To use PDF Overlay CLI, the following dependancies have to be satisfied.
 - tqdm
 - pyfiglet
 
-Also, PDF Overlay only supports PDF files with same pages count.
+Also, PDF Overlay only supports PDF files with **same pages count**.
 
 ## How to Use
 
