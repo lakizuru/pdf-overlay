@@ -57,4 +57,6 @@ pip install PyMuPDF Pillow pyfiglet tqdm
  python3 script.py <foreground_pdf_path> <background_pdf_path> <output_pdf_path>
  ```
 
+<img src="docs\Screenshot.jpg" alt="Screenshot"/>
+
  For quick help, use `python3 script.py -h`
