@@ -2,11 +2,22 @@ import fitz  # PyMuPDF
 from PIL import Image, ImageChops, ImageEnhance
 import subprocess
 import os
-import pypdftk
 import argparse
+from tqdm import tqdm
 
-multiline_description = """Remove white background from a PDF and overlay it on another PDF.\n
-Perfect for merging annotated or highlighted documents onto standardized templates."""
+multiline_description = """
+#    _____  _____  ______    ____                 _             
+#   |  __ \|  __ \|  ____|  / __ \               | |            
+#   | |__) | |  | | |__    | |  | |_   _____ _ __| | __ _ _   _ 
+#   |  ___/| |  | |  __|   | |  | \ \ / / _ \ '__| |/ _` | | | |
+#   | |    | |__| | |      | |__| |\ V /  __/ |  | | (_| | |_| |
+#   |_|    |_____/|_|       \____/  \_/ \___|_|  |_|\__,_|\__, |
+#                                                          __/ |
+#                                                         |___/ \n
+Remove white background from a PDF and overlay it on another PDF.
+Perfect for merging annotated or highlighted documents onto standardized templates.\n
+Developed by Lakisuru Semasinghe (https://github.com/lakizuru)
+"""
 
 def remove_white_background(image_path):
     """
@@ -34,12 +45,19 @@ def process_pdf(input_pdf_path, background_pdf_path, output_pdf_path):
     input_pdf = fitz.open(input_pdf_path)
     background_pdf = fitz.open(background_pdf_path)
 
-    if len(input_pdf) != len(background_pdf):
+    input_page_count = len(input_pdf)
+    output_page_count = len(background_pdf)
+
+    print(f'\nPages in Foreground PDF ({input_pdf_path}): {input_page_count}')
+    print(f'Pages in Background PDF ({background_pdf_path}): {output_page_count}\n')
+
+    if input_page_count != output_page_count:
         raise ValueError("Both PDFs must have the same number of pages.")
+
 
     output_pdf = fitz.open()  # New empty PDF for output
 
-    for page_num in range(len(input_pdf)):
+    for page_num in tqdm(range(input_page_count), desc="Processing pages", unit="page"):
         input_page = input_pdf.load_page(page_num)
         background_page = background_pdf.load_page(page_num)
 
@@ -66,23 +84,44 @@ def process_pdf(input_pdf_path, background_pdf_path, output_pdf_path):
         # os.remove(img_path)
         os.remove(extracted_img_path)
 
+    print(f'')
+
     output_pdf.save(output_pdf_path)
     input_pdf.close()
     background_pdf.close()
     output_pdf.close()
 
-def compress_pdf(input_file, output_file):
+    return input_page_count
+
+def compress_pdf(input_file, output_file, page_count):
     try:
         # Define the Ghostscript command for compression
         gs_command = [
             'gs', '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.4',
-            '-dPDFSETTINGS=/printer', '-dNOPAUSE', '-dBATCH', '-dQUIET',
+            '-dPDFSETTINGS=/printer', '-dNOPAUSE', '-dBATCH',
             '-sOutputFile={}'.format(output_file), input_file
         ]
         
-        # Execute the Ghostscript command
-        subprocess.run(gs_command, check=True)
-        print(f'Compressed PDF saved as: {output_file}')
+        # Execute the Ghostscript command and capture the output
+        process = subprocess.Popen(gs_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+
+        # Create a tqdm progress bar
+        with tqdm(total=page_count, desc="Compressing PDF", unit="page") as pbar:
+            while True:
+                output = process.stdout.readline()
+                if output == '' and process.poll() is not None:
+                    break
+                if output:
+                    if "Page" in output:
+                        pbar.update(1)
+
+        print(f'')
+        
+        if process.returncode != 0:
+            print(f'An error occurred: {process.stderr.read()}')
+        else:
+            print(f'Compressed PDF saved as: {output_file}')
+
     except subprocess.CalledProcessError as e:
         print(f'An error occurred: {e}')
     except FileNotFoundError:
@@ -99,11 +138,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-# Overlay the 2 PDF files
-process_pdf(args.foreground_pdf_path, args.background_pdf_path, overlayed_pdf_path)
+    print(f'{multiline_description}')
 
-# Compress the Overlayed PDF file.
-compress_pdf(overlayed_pdf_path, args.output_pdf_path)
+    # Overlay the 2 PDF files
+    page_count = process_pdf(args.foreground_pdf_path, args.background_pdf_path, overlayed_pdf_path)
 
-# Delete Overlayed PDF.
-os.remove(overlayed_pdf_path)
+    # Compress the Overlayed PDF file.
+    compress_pdf(overlayed_pdf_path, args.output_pdf_path, page_count)
+
+    # Delete Overlayed PDF.
+    os.remove(overlayed_pdf_path)
