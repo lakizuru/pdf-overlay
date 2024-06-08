@@ -1,2 +1,46 @@
-# pdf-overlay
+# PDF Overlay
+```
+   _____  _____  ______    ____                 _             
+  |  __ \|  __ \|  ____|  / __ \               | |            
+  | |__) | |  | | |__    | |  | |_   _____ _ __| | __ _ _   _ 
+  |  ___/| |  | |  __|   | |  | \ \ / / _ \ '__| |/ _` | | | |
+  | |    | |__| | |      | |__| |\ V /  __/ |  | | (_| | |_| |
+  |_|    |_____/|_|       \____/  \_/ \___|_|  |_|\__,_|\__, |
+                                                         __/ |
+                                                        |___/ 
+```
+
 A Python script processes a multi-page PDF to remove white backgrounds from its pages and overlays them onto another PDF which is optimized for reduced file size while maintaining acceptable image quality through JPEG compression and resolution adjustment. Perfect for merging annotated or highlighted documents onto standardized templates.
+
+#### Developed by Lakisuru Semasinghe (https://github.com/lakizuru)
+
+## Prerequisites
+To use PDF Overlay CLI, the following dependancies have to be satisfied.
+- Python3
+- PIP3
+- GhostScript
+- PyMuPDF
+- Pillow
+- tqdm
+- pyfiglet
+
+Also, PDF Overlay only supports PDF files with same pages count.
+
+## How to Use
+
+To overlay PDFs, follow the steps below. (You may skip the steps if you have already fulfilled them earlier)
+ 1. Install Python3 and PIP
+ ```
+sudo apt update
+sudo apt install python3 python3-pip ghostscript
+```
+ 2. Install the following PIP3 modules.
+ ```
+pip install PyMuPDF Pillow pyfiglet tqdm
+ ```
+ 3. Run the script.py as follows.
+ ```
+ python3 script.py <foreground_pdf_path> <background_pdf_path> <output_pdf_path>
+ ```
+
+ For quick help, use `python3 script.py -h`

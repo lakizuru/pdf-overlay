@@ -4,20 +4,23 @@ import subprocess
 import os
 import argparse
 from tqdm import tqdm
+import pyfiglet
 
-multiline_description = """
-#    _____  _____  ______    ____                 _             
-#   |  __ \|  __ \|  ____|  / __ \               | |            
-#   | |__) | |  | | |__    | |  | |_   _____ _ __| | __ _ _   _ 
-#   |  ___/| |  | |  __|   | |  | \ \ / / _ \ '__| |/ _` | | | |
-#   | |    | |__| | |      | |__| |\ V /  __/ |  | | (_| | |_| |
-#   |_|    |_____/|_|       \____/  \_/ \___|_|  |_|\__,_|\__, |
-#                                                          __/ |
-#                                                         |___/ \n
-Remove white background from a PDF and overlay it on another PDF.
+# Define your ASCII art
+ascii_art_text = "PDF Overlay"
+
+# Get terminal width
+terminal_width = os.get_terminal_size().columns
+
+# Adjust font size based on terminal width
+font_size = min(terminal_width // len(ascii_art_text.split('\n')), 100)
+
+# Generate ASCII art with the adjusted font size
+ascii_art = pyfiglet.figlet_format(ascii_art_text, font="standard", width=terminal_width)
+
+multiline_description = """Remove white background from a PDF and overlay it on another PDF.
 Perfect for merging annotated or highlighted documents onto standardized templates.\n
-Developed by Lakisuru Semasinghe (https://github.com/lakizuru)
-"""
+Developed by Lakisuru Semasinghe (https://github.com/lakizuru)"""
 
 def remove_white_background(image_path):
     """
@@ -131,6 +134,7 @@ overlayed_pdf_path = "test_files/overlayed.pdf"
 compressed_pdf_path = "test_files/compressed.pdf"
 
 if __name__ == "__main__":
+    print(ascii_art)
     parser = argparse.ArgumentParser(description=multiline_description)
     parser.add_argument("foreground_pdf_path", help="Path to the input PDF with white background to remove.")
     parser.add_argument("background_pdf_path", help="Path to the background PDF to overlay the processed PDF onto.")
